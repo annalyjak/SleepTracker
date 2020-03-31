@@ -46,7 +46,7 @@ class SleepTrackerFragment : Fragment() {
 
         binding.lifecycleOwner = this
 
-        sleepTrackerViewModel.navifateToSleepQuality.observe(this, Observer {
+        sleepTrackerViewModel.navifateToSleepQuality.observe(viewLifecycleOwner, Observer {
             night ->
             night?.let {
                 this.findNavController().navigate(
@@ -57,7 +57,7 @@ class SleepTrackerFragment : Fragment() {
             }
         })
 
-        sleepTrackerViewModel.showSnackbarEvent.observe(this, Observer {
+        sleepTrackerViewModel.showSnackbarEvent.observe(viewLifecycleOwner, Observer {
             if (it == true) { // Observed state is true.
                 Snackbar.make(
                     activity!!.findViewById(android.R.id.content),
@@ -66,6 +66,14 @@ class SleepTrackerFragment : Fragment() {
                 ).show()
                 sleepTrackerViewModel.doneShowingSnackbar()
             }
+        })
+
+        val adapter = SleepNightAdapter()
+
+        binding.sleepList.adapter = adapter
+
+        sleepTrackerViewModel.nights.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
         })
 
         return binding.root
